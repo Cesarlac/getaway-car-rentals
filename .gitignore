@@ -1,0 +1,17 @@
+# Back-end (Maven / Java)
+backend/target/
+*.class
+*.log
+
+# Front-end (Node / Vite)
+frontend/node_modules/
+frontend/dist/
+
+# Segredos e scripts locais
+.env
+*.env
+rodar.ps1
+
+# IDE
+.vscode/
+.idea/
