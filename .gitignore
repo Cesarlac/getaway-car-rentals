@@ -6,6 +6,7 @@ backend/target/
 # Front-end (Node / Vite)
 frontend/node_modules/
 frontend/dist/
+frontend/public/carros/
 
 # Segredos e scripts locais
 .env
