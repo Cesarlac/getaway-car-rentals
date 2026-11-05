@@ -180,4 +180,4 @@ Todos os repositories estendem `JpaRepository<Entidade, UUID>`. Dois têm consul
 | `POST /api/pedidos`, `GET /api/pedidos/meus`, `GET /api/pedidos/{id}` | ✅ | ❌ 403 |
 | `PUT /api/pedidos/{id}`, `PUT /api/pedidos/{id}/cancelar` | ✅ | ❌ 403 |
 | `GET /api/pedidos`, `PUT /api/pedidos/{id}/avaliacao` | ❌ 403 | ✅ |
-| `/api/clientes/**` | ⚠️ sem restrição de perfil | ⚠️ sem restrição de perfil |
+| `/api/clientes/**` | ❌ 403 | ✅ |
