@@ -9,12 +9,18 @@ export default function MeusPedidos() {
   const [novoCarro, setNovoCarro] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(true)
+  const [contratos, setContratos] = useState({})
 
   async function carregar() {
     try {
-      const [p, c] = await Promise.all([api('/api/pedidos/meus'), api('/api/automoveis')])
+      const [p, c, k] = await Promise.all([
+        api('/api/pedidos/meus'),
+        api('/api/automoveis'),
+        api('/api/contratos/meus'),
+      ])
       setPedidos(p)
       setCarros(c)
+      setContratos(Object.fromEntries(k.map((x) => [x.pedido.id, x])))
     } catch (e) {
       setErro(e.message)
     } finally {
@@ -63,6 +69,12 @@ export default function MeusPedidos() {
             <strong>{p.automovel.marca} {p.automovel.modelo}</strong>
             <small>{new Date(p.dataCriacao).toLocaleString('pt-BR')}</small>
             <span className={`status ${p.statusFinanceiro}`}>{p.statusFinanceiro}</span>
+            {contratos[p.id] && (
+              <div className="contrato-box">
+                💳 Crédito concedido por <strong>{contratos[p.id].bancoAgente.nome}</strong> em{' '}
+                {new Date(contratos[p.id].dataConcessao).toLocaleString('pt-BR')}
+              </div>
+            )}
 
             {p.statusFinanceiro === 'Pendente' && editando !== p.id && (
               <div className="acoes">

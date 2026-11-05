@@ -9,6 +9,7 @@ const moeda = (v) =>
 
 export default function Painel() {
   const [pedidos, setPedidos] = useState([])
+  const [contratos, setContratos] = useState({})
   const [filtro, setFiltro] = useState('Pendente')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(true)
@@ -16,7 +17,9 @@ export default function Painel() {
 
   async function carregar() {
     try {
-      setPedidos(await api('/api/pedidos'))
+      const [p, c] = await Promise.all([api('/api/pedidos'), api('/api/contratos')])
+      setPedidos(p)
+      setContratos(Object.fromEntries(c.map((x) => [x.pedido.id, x])))
     } catch (e) {
       setErro(e.message)
     } finally {
@@ -28,11 +31,11 @@ export default function Painel() {
     carregar()
   }, [])
 
-  async function avaliar(id, status) {
+  async function executar(id, acao) {
     setErro('')
     setProcessando(id)
     try {
-      await api(`/api/pedidos/${id}/avaliacao`, { method: 'PUT', body: { status } })
+      await acao()
       await carregar()
     } catch (e) {
       setErro(e.message)
@@ -40,6 +43,12 @@ export default function Painel() {
       setProcessando(null)
     }
   }
+
+  const avaliar = (id, status) =>
+    executar(id, () => api(`/api/pedidos/${id}/avaliacao`, { method: 'PUT', body: { status } }))
+
+  const conceder = (id) =>
+    executar(id, () => api('/api/contratos', { method: 'POST', body: { pedidoId: id } }))
 
   const visiveis = filtro === 'Todos' ? pedidos : pedidos.filter((p) => p.statusFinanceiro === filtro)
   const contar = (s) => pedidos.filter((p) => p.statusFinanceiro === s).length
@@ -63,6 +72,7 @@ export default function Painel() {
       {visiveis.map((p) => {
         const rendimentos = p.cliente?.empregadoresRendimentos ?? []
         const total = rendimentos.reduce((soma, r) => soma + Number(r.valor || 0), 0)
+        const contrato = contratos[p.id]
         return (
           <article key={p.id} className="pedido">
             <img src={urlFoto(p.automovel.matricula, 'frente')} alt={p.automovel.modelo} />
@@ -95,6 +105,20 @@ export default function Painel() {
                   </button>
                 </div>
               )}
+
+              {p.statusFinanceiro === 'Aprovado' &&
+                (contrato ? (
+                  <div className="contrato-box">
+                    💳 Crédito concedido por <strong>{contrato.bancoAgente.nome}</strong> em{' '}
+                    {new Date(contrato.dataConcessao).toLocaleString('pt-BR')}
+                  </div>
+                ) : (
+                  <div className="acoes">
+                    <button disabled={processando === p.id} onClick={() => conceder(p.id)}>
+                      Conceder crédito
+                    </button>
+                  </div>
+                ))}
             </div>
           </article>
         )

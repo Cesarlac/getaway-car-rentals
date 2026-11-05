@@ -58,3 +58,4 @@ button.perigo { background: #b91c1c; }
 .filtros { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .cliente-box { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.6rem 0.8rem; background: #f3f4f6; border-radius: 8px; }
 .cliente-box ul { margin: 0.2rem 0; padding-left: 1.1rem; }
+.contrato-box { padding: 0.5rem 0.8rem; background: #ecfdf5; color: #065f46; border-radius: 8px; font-size: 0.9rem; }
