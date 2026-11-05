@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../auth/AuthContext.js'
 import { POSES, urlFoto } from '../fotos.js'
+import { ehCliente as ehClientePerfil } from '../perfil.js'
 
 export default function CarroDetalhe() {
   const { id } = useParams()
@@ -13,7 +14,7 @@ export default function CarroDetalhe() {
   const [erro, setErro] = useState('')
   const [enviando, setEnviando] = useState(false)
 
-  const ehCliente = sessao.perfil?.toUpperCase() === 'CLIENTE'
+  const ehCliente = ehClientePerfil(sessao)
 
   useEffect(() => {
     api('/api/automoveis')
