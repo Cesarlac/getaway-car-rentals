@@ -38,6 +38,10 @@ public class AuthController {
 
     @GetMapping("/api/me")
     public Map<String, String> me(@AuthenticationPrincipal Jwt jwt) {
-        return Map.of("login", jwt.getSubject(), "perfil", jwt.getClaimAsString("perfil"));
+        return Map.of(
+                "login", jwt.getSubject(),
+                "perfil", jwt.getClaimAsString("perfil"),
+                "tipoAgente", service.tipoAgente(jwt.getSubject()),
+                "agenteId", service.agenteId(jwt.getSubject()));
     }
-}
+}

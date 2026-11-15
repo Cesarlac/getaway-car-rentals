@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,51 +30,34 @@ public class PedidoAluguel {
     private Automovel automovel;
 
     @Column(name = "status_financeiro")
-    private String statusFinanceiro; // "Pendente", "Aprovado" ou "Reprovado"v
-    
+    private String statusFinanceiro; // "Pendente", "Aprovado", "Reprovado" ou "Cancelado"
+
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao = LocalDateTime.now();
-    
-    // getters e setters
-    public UUID getId() {
-        return id;
-    }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    @Column(name = "data_inicio")
+    private LocalDate dataInicio;
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+    @Column(name = "data_fim")
+    private LocalDate dataFim;
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    @Column(name = "valor_total")
+    private BigDecimal valorTotal;
 
-    public Automovel getAutomovel() {
-        return automovel;
-    }
-
-    public void setAutomovel(Automovel automovel) {
-        this.automovel = automovel;
-    }
-
-    public String getStatusFinanceiro() {
-        return statusFinanceiro;
-    }
-
-    public void setStatusFinanceiro(String statusFinanceiro) {
-        this.statusFinanceiro = statusFinanceiro;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
-    
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+    public Automovel getAutomovel() { return automovel; }
+    public void setAutomovel(Automovel automovel) { this.automovel = automovel; }
+    public String getStatusFinanceiro() { return statusFinanceiro; }
+    public void setStatusFinanceiro(String statusFinanceiro) { this.statusFinanceiro = statusFinanceiro; }
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    public LocalDate getDataInicio() { return dataInicio; }
+    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
+    public LocalDate getDataFim() { return dataFim; }
+    public void setDataFim(LocalDate dataFim) { this.dataFim = dataFim; }
+    public BigDecimal getValorTotal() { return valorTotal; }
+    public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
 }

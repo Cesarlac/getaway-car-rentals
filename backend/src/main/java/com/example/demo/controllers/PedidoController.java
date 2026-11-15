@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,8 @@ import com.example.demo.services.PedidoService;
 @RequestMapping("/api/pedidos")
 public class PedidoController {
 
-    public record PedidoRequest(UUID automovelId) {}
-    public record AvaliacaoRequest(String status) {}
+    public record PedidoRequest(UUID automovelId, LocalDate dataInicio, LocalDate dataFim) {}
+    public record AvaliacaoRequest(String status, List<UUID> creditosIds) {}
 
     private final PedidoService service;
 
@@ -38,7 +39,7 @@ public class PedidoController {
     @PreAuthorize("hasRole('CLIENTE')")
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoAluguel criar(@AuthenticationPrincipal Jwt jwt, @RequestBody PedidoRequest req) {
-        return service.criar(jwt.getSubject(), req.automovelId());
+        return service.criar(jwt.getSubject(), req.automovelId(), req.dataInicio(), req.dataFim());
     }
 
     @GetMapping("/meus")
@@ -57,7 +58,7 @@ public class PedidoController {
     @PreAuthorize("hasRole('CLIENTE')")
     public PedidoAluguel modificar(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id,
                                    @RequestBody PedidoRequest req) {
-        return service.modificar(jwt.getSubject(), id, req.automovelId());
+        return service.modificar(jwt.getSubject(), id, req.automovelId(), req.dataInicio(), req.dataFim());
     }
 
     @PutMapping("/{id}/cancelar")
@@ -76,7 +77,8 @@ public class PedidoController {
 
     @PutMapping("/{id}/avaliacao")
     @PreAuthorize("hasRole('AGENTE')")
-    public PedidoAluguel avaliar(@PathVariable UUID id, @RequestBody AvaliacaoRequest req) {
-        return service.avaliar(id, req.status());
+    public PedidoAluguel avaliar(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id,
+                                 @RequestBody AvaliacaoRequest req) {
+        return service.avaliar(jwt.getSubject(), id, req.status(), req.creditosIds());
     }
 }

@@ -30,6 +30,10 @@ public class ContratoCredito {
     @Column(name = "data_concessao")
     private LocalDateTime dataConcessao;
 
+    /** true quando a empresa escolheu usar este crédito ao aprovar o pedido. */
+    @Column(name = "utilizado")
+    private boolean utilizado;
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public PedidoAluguel getPedido() { return pedido; }
@@ -38,4 +42,6 @@ public class ContratoCredito {
     public void setBancoAgente(Agente bancoAgente) { this.bancoAgente = bancoAgente; }
     public LocalDateTime getDataConcessao() { return dataConcessao; }
     public void setDataConcessao(LocalDateTime dataConcessao) { this.dataConcessao = dataConcessao; }
+    public boolean isUtilizado() { return utilizado; }
+    public void setUtilizado(boolean utilizado) { this.utilizado = utilizado; }
 }

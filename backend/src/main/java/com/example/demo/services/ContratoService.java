@@ -34,6 +34,11 @@ public class ContratoService {
         this.agentes = agentes;
     }
 
+    /**
+     * O banco concede crédito a um pedido ainda Pendente. Vários bancos podem conceder
+     * crédito ao mesmo pedido (um contrato por banco); a empresa decide, ao aprovar,
+     * quais créditos serão utilizados.
+     */
     @Transactional
     public ContratoCredito conceder(String login, UUID pedidoId) {
         UUID agenteId = usuarios.findByLogin(login)
@@ -47,17 +52,20 @@ public class ContratoService {
 
         PedidoAluguel pedido = pedidos.findById(pedidoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
-        if (!"Aprovado".equals(pedido.getStatusFinanceiro())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "O pedido precisa estar Aprovado");
+        if (!"Pendente".equals(pedido.getStatusFinanceiro())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Só é possível conceder crédito a pedidos Pendentes");
         }
-        if (contratos.existsByPedidoId(pedidoId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este pedido já possui contrato de crédito");
+        if (contratos.existsByPedidoIdAndBancoAgenteId(pedidoId, banco.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Este banco já concedeu crédito a este pedido");
         }
 
         ContratoCredito c = new ContratoCredito();
         c.setPedido(pedido);
         c.setBancoAgente(banco);
         c.setDataConcessao(LocalDateTime.now());
+        c.setUtilizado(false);
         return contratos.save(c);
     }
 

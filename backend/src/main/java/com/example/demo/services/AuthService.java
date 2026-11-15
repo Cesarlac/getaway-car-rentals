@@ -101,4 +101,21 @@ public class AuthService {
 
         return new LoginResponse(token, u.getPerfil());
     }
-}
+
+    /** Tipo do agente logado ("Banco" ou "Empresa"); string vazia se o usuário não for agente. */
+    public String tipoAgente(String login) {
+        return usuarios.findByLogin(login)
+                .map(Usuario::getAgenteId)
+                .flatMap(agentes::findById)
+                .map(Agente::getTipo)
+                .orElse("");
+    }
+
+    /** Id do agente logado; string vazia se o usuário não for agente. */
+    public String agenteId(String login) {
+        return usuarios.findByLogin(login)
+                .map(Usuario::getAgenteId)
+                .map(Object::toString)
+                .orElse("");
+    }
+}
