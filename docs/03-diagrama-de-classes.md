@@ -37,17 +37,31 @@ classDiagram
         -String modelo
         -String ano
         -String tipoProprietario
+        -BigDecimal valor
+        -String motor
+        -Integer cv
+        -String torque
+        -String transmissao
+        -String tracao
+        -String aceleracao
+        -String velocidadeMaxima
+        -String equipamentos
+        -Boolean destaque
     }
 
     class PedidoAluguel {
         -UUID id
         -String statusFinanceiro
         -LocalDateTime dataCriacao
+        -LocalDate dataInicio
+        -LocalDate dataFim
+        -BigDecimal valorTotal
     }
 
     class ContratoCredito {
         -UUID id
         -LocalDateTime dataConcessao
+        -boolean utilizado
     }
 
     class Usuario {
@@ -62,7 +76,7 @@ classDiagram
     Cliente "1" *-- "0..3" Rendimento : empregadoresRendimentos (jsonb)
     Cliente "1" <-- "0..*" PedidoAluguel : solicita
     Automovel "1" <-- "0..*" PedidoAluguel : refere-se a
-    PedidoAluguel "1" <-- "0..1" ContratoCredito : financia
+    PedidoAluguel "1" <-- "0..*" ContratoCredito : recebe crédito
     Agente "1" <-- "0..*" ContratoCredito : concede (banco)
     Usuario "0..1" ..> "1" Cliente : perfil Cliente
     Usuario "0..1" ..> "1" Agente : perfil Agente
@@ -81,7 +95,11 @@ classDiagram
 
 - `Rendimento` não é tabela: é guardado como `jsonb` dentro de `clientes`, com limite de 3 validado no `AuthService` e no `ClienteService`.
 - `Usuario` referencia `Cliente` ou `Agente` por UUID (`clienteId` / `agenteId`), sem `@ManyToOne`. Exatamente um dos dois é preenchido, conforme o perfil.
-- `ContratoCredito` está modelado e tem tabela, mas ainda não tem service nem endpoint (ver HU13).
+- `ContratoCredito` é concedido por agente `Banco` para pedido `Pendente`. Um pedido pode ter vários créditos, no máximo um por banco (constraint única em `pedido_id` + `banco_agente_id`). Implementado em `ContratoService` e `ContratoController` (HU13).
+- `ContratoCredito.utilizado` fica `true` quando a `Empresa`, ao aprovar, escolhe usar aquele crédito (`PedidoService.avaliar`, HU20). Aprovar sem escolher nenhum é permitido.
+- Quando o cliente modifica o pedido, os créditos já concedidos são apagados (`PedidoService.modificar`), porque valiam para o carro e o valor anteriores.
+- O tipo do agente (`Banco` ou `Empresa`) não vai no token: é lido do banco a cada ação, em `ContratoService.conceder` e `PedidoService.avaliar`.
+- **Regra de preço:** diária = 0,3% de `Automovel.valor`; `PedidoAluguel.valorTotal` = diária × dias do período. O cálculo é feito em `PedidoService.aplicarPeriodo`, nunca no navegador.
 
 ## 2. Camadas (MVC no back-end)
 
@@ -108,15 +126,23 @@ classDiagram
         +modificar(Jwt, UUID, PedidoRequest) PedidoAluguel
         +cancelar(Jwt, UUID) PedidoAluguel
         +todos() List~PedidoAluguel~
-        +avaliar(UUID, AvaliacaoRequest) PedidoAluguel
+        +avaliar(Jwt, UUID, AvaliacaoRequest) PedidoAluguel
     }
     class AutomovelController {
         +listar() List~Automovel~
     }
 
+    class ContratoController {
+        +conceder(Jwt, ContratoRequest) ContratoCredito
+        +todos() List~ContratoCredito~
+        +meus(Jwt) List~ContratoCredito~
+    }
+
     class AuthService {
         +registrar(RegistroRequest)
         +login(LoginRequest) LoginResponse
+        +tipoAgente(String) String
+        +agenteId(String) String
     }
     class ClienteService {
         +listar() List~Cliente~
@@ -126,13 +152,19 @@ classDiagram
         +excluir(UUID)
     }
     class PedidoService {
-        +criar(String, UUID) PedidoAluguel
+        +criar(String, UUID, LocalDate, LocalDate) PedidoAluguel
         +listarDoCliente(String) List~PedidoAluguel~
         +consultar(String, UUID) PedidoAluguel
-        +modificar(String, UUID, UUID) PedidoAluguel
+        +modificar(String, UUID, UUID, LocalDate, LocalDate) PedidoAluguel
         +cancelar(String, UUID) PedidoAluguel
         +listarTodos() List~PedidoAluguel~
-        +avaliar(UUID, String) PedidoAluguel
+        +avaliar(String, UUID, String, List~UUID~) PedidoAluguel
+    }
+
+    class ContratoService {
+        +conceder(String, UUID) ContratoCredito
+        +listarTodos() List~ContratoCredito~
+        +listarDoCliente(String) List~ContratoCredito~
     }
 
     class ClienteRepository
@@ -154,6 +186,7 @@ classDiagram
     ClienteController --> ClienteService
     PedidoController --> PedidoService
     AutomovelController --> AutomovelRepository
+    ContratoController --> ContratoService
 
     AuthService --> UsuarioRepository
     AuthService --> ClienteRepository
@@ -164,20 +197,33 @@ classDiagram
     PedidoService --> UsuarioRepository
     PedidoService --> ClienteRepository
     PedidoService --> AutomovelRepository
+    PedidoService --> AgenteRepository
+    PedidoService --> ContratoCreditoRepository
+    ContratoService --> ContratoCreditoRepository
+    ContratoService --> PedidoAluguelRepository
+    ContratoService --> UsuarioRepository
+    ContratoService --> AgenteRepository
 ```
 
-Todos os repositories estendem `JpaRepository<Entidade, UUID>`. Dois têm consultas extras:
+Todos os repositories estendem `JpaRepository<Entidade, UUID>`. Três têm consultas extras:
 
 - `UsuarioRepository`: `findByLogin`, `existsByLogin`
 - `PedidoAluguelRepository`: `findByClienteIdOrderByDataCriacaoDesc`, `findAllByOrderByDataCriacaoDesc`
+- `ContratoCreditoRepository`: `existsByPedidoIdAndBancoAgenteId`, `findByPedidoId`, `findByPedidoClienteId`, `findAllByOrderByDataConcessaoDesc`
 
 ## 3. Autorização por perfil
 
-| Endpoint | Cliente | Agente |
-|---|:---:|:---:|
-| `POST /api/auth/registrar`, `POST /api/auth/login` | público | público |
-| `GET /api/automoveis` | ✅ | ✅ |
-| `POST /api/pedidos`, `GET /api/pedidos/meus`, `GET /api/pedidos/{id}` | ✅ | ❌ 403 |
-| `PUT /api/pedidos/{id}`, `PUT /api/pedidos/{id}/cancelar` | ✅ | ❌ 403 |
-| `GET /api/pedidos`, `PUT /api/pedidos/{id}/avaliacao` | ❌ 403 | ✅ |
-| `/api/clientes/**` | ❌ 403 | ✅ |
+| Endpoint | Cliente | Banco | Empresa |
+|---|:---:|:---:|:---:|
+| `POST /api/auth/registrar`, `POST /api/auth/login` | público | público | público |
+| `GET /api/automoveis`, `GET /api/me` | ✅ | ✅ | ✅ |
+| `POST /api/pedidos`, `GET /api/pedidos/meus`, `GET /api/pedidos/{id}` | ✅ | ❌ 403 | ❌ 403 |
+| `PUT /api/pedidos/{id}`, `PUT /api/pedidos/{id}/cancelar` | ✅ | ❌ 403 | ❌ 403 |
+| `GET /api/pedidos` | ❌ 403 | ✅ | ✅ |
+| `PUT /api/pedidos/{id}/avaliacao` | ❌ 403 | ❌ 403 | ✅ |
+| `/api/clientes/**` | ❌ 403 | ✅ | ✅ |
+| `POST /api/contratos` | ❌ 403 | ✅ | ❌ 403 |
+| `GET /api/contratos` | ❌ 403 | ✅ | ✅ |
+| `GET /api/contratos/meus` | ✅ | ❌ 403 | ❌ 403 |
+
+O perfil (`Cliente` ou `Agente`) é verificado com `@PreAuthorize`, a partir do token. A distinção entre `Banco` e `Empresa` é verificada dentro dos services, consultando o agente no banco.
