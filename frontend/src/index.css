@@ -1,61 +1,633 @@
+/* =====================================================================
+   Getaway Car Rentals · Tema Claro / Escuro
+   Azul da marca: #0159FD (extraído da logo)
+   ===================================================================== */
+:root {
+  --largura: 1440px; /* largura máxima do conteúdo */
+  --azul: #0159fd;
+  --azul-hover: #0044cf;
+  --azul-claro: #e8f0ff;
+  --preto: #000;
+  --texto: #14161c;
+  --suave: #5f6675;
+  --linha: #e3e7ef;
+  --fundo-suave: #f4f6fb;
+  --fundo: #ffffff;
+  --fundo-cartao: #ffffff;
+  --fonte: 'Barlow', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --titulo: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+  --sombra: 0 4px 18px rgba(15, 25, 60, 0.07);
+  --cor-link-menu: #5f6675;
+  --cor-link-ativo: #14161c;
+  --cor-sub-logo: #0159fd;
+}
+
+html.dark {
+  --azul: #3b82f6;
+  --azul-hover: #60a5fa;
+  --azul-claro: #1e3a8a;
+  --preto: #111827;
+  --texto: #f3f4f6;
+  --suave: #9ca3af;
+  --linha: #374151;
+  --fundo-suave: #1f2937;
+  --fundo: #030712;
+  --fundo-cartao: #111827;
+  --sombra: 0 4px 18px rgba(0, 0, 0, 0.4);
+  --cor-link-menu: #cfd6e6;
+  --cor-link-ativo: #ffffff;
+  --cor-sub-logo: #7fa9ff;
+  color-scheme: dark;
+  
+}
+
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  font-family: system-ui, Arial, sans-serif;
-  background: #f3f4f6;
-  color: #111827;
+  font-family: var(--fonte);
+  font-size: 16px;
+  color: var(--texto);
+  background: var(--fundo);
 }
 
-.cartao {
-  max-width: 520px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+img { max-width: 100%; }
+a { color: var(--azul); }
 
-form { display: flex; flex-direction: column; gap: 0.8rem; }
-label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.9rem; }
-input, select { padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
-button { padding: 0.55rem 1rem; border: 0; border-radius: 6px; background: #111827; color: #fff; cursor: pointer; font-size: 1rem; }
-button:disabled { opacity: 0.6; cursor: wait; }
-fieldset { border: 1px solid #d1d5db; border-radius: 6px; display: flex; flex-direction: column; gap: 0.5rem; }
+h1, h2, h3 {
+  font-family: var(--titulo);
+  letter-spacing: 0.02em;
+  margin: 0 0 0.5rem;
+  line-height: 1.05;
+}
+p { line-height: 1.5; }
+
+/* Adicionado padding no topo para compensar o menu transparente (absolute) */
+.app { min-height: 100vh; display: flex; flex-direction: column; padding-top: 76px; }
+.conteudo { flex: 1; }
+
+/* ---------- formulários ---------- */
+form { display: flex; flex-direction: column; gap: 0.9rem; }
+label {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  font-size: 0.85rem; font-weight: 500; color: var(--suave); letter-spacing: 0.03em;
+}
+input, select {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  font: inherit; font-size: 1rem; color: var(--texto); background: var(--fundo-cartao);
+}
+input:focus, select:focus { outline: 2px solid var(--azul); border-color: var(--azul); }
+fieldset { border: 1px solid var(--linha); border-radius: 8px; display: flex; flex-direction: column; gap: 0.6rem; }
+legend { font-size: 0.85rem; color: var(--suave); padding: 0 0.4rem; }
 .linha { display: flex; gap: 0.5rem; }
 .linha input { flex: 1; min-width: 0; }
-.erro { color: #b91c1c; margin: 0; }
-.menu { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 0.8rem 1.5rem; background: #111827; color: #fff; }
-.menu nav { display: flex; gap: 1rem; }
-.menu a { color: #fff; text-decoration: none; }
-.menu button { padding: 0.3rem 0.7rem; margin-left: 0.5rem; background: #374151; }
+.erro { color: #b91c1c; margin: 0; font-size: 0.92rem; }
 
-.pagina { max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem; }
-.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
-.card { display: block; background: #fff; border-radius: 10px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; background: #e5e7eb; }
-.card-info { display: flex; flex-direction: column; padding: 0.7rem; gap: 0.15rem; }
+/* ---------- botões ---------- */
+button, .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border: 0; border-radius: 18px;
+  background: var(--azul); color: #fff;
+  font: 600 0.9rem var(--fonte);
+  letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+/* O hover global não vale para o switch de tema nem para o SpecularButton, que têm visual próprio */
+button:where(:not(.squish-switch, .specular-button)):hover:not(:disabled), .btn:hover { background: var(--azul-hover); }
+button:active:not(:disabled), .btn:active { transform: translateY(1px); }
+.squish-switch, .specular-button { clip-path: none; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Secundário: neutro com contorno, igual ao "Ver veículo" */
+button.secundario, button.chip-btn { background: var(--fundo-cartao); color: var(--texto); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--texto) 30%, transparent); }
+button.secundario:hover:not(:disabled), button.chip-btn:hover:not(:disabled) { background: var(--fundo-suave); color: var(--texto); box-shadow: inset 0 0 0 1px var(--texto); }
+/* Chips de escolha (períodos, filtros): o selecionado fica azul */
+button.chip-btn.ativo, button.chip-btn.ativo:hover:not(:disabled) { background: var(--azul); color: #fff; box-shadow: none; }
+button.perigo { background: #b91c1c; color: #fff; }
+button.perigo:hover:not(:disabled) { background: #8f1515; }
+.btn-contorno { background: var(--fundo-cartao); color: var(--texto); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--texto) 30%, transparent); }
+.btn-contorno:hover { background: var(--fundo-suave); color: var(--texto); box-shadow: inset 0 0 0 1px var(--texto); }
+.link-btn {
+  background: none; color: var(--azul); text-decoration: none; clip-path: none;
+  text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 0.95rem; padding: 0.3rem;
+}
+.link-btn:hover:not(:disabled) { background: none; color: var(--azul-hover); }
 
-.detalhe { display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-start; }
-.foto-grande { width: 100%; max-width: 800px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 10px; background: #e5e7eb; }
-.miniaturas { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.miniaturas img { width: 90px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
-.miniaturas img.ativa { border-color: #111827; }
+/* ---------- marca ---------- */
+.marca-logo { display: inline-flex; align-items: center; gap: 0.7rem; color: #fff; }
+.marca-logo img { height: 44px; width: 44px; display: block; }
+.marca-texto { display: flex; flex-direction: column; line-height: 1; }
+.marca-texto strong { font-family: var(--titulo); font-size: 1.7rem; letter-spacing: 0.24em; font-weight: 700; color: var(--texto); }
+.marca-texto small { font-size: 0.6rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--cor-sub-logo); margin-top: 0.25rem; }
 
-.pedido { display: flex; gap: 1rem; background: #fff; border-radius: 10px; padding: 0.8rem; margin-bottom: 0.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.pedido img { width: 180px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; }
-.pedido-info { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+/* ---------- menu ---------- */
+.menu { background: transparent; position: absolute; width: 100%; top: 0; left: 0; z-index: 20; border-bottom: 1px solid rgba(120, 120, 120, 0.2); }
+.menu-int { max-width: var(--largura); margin: 0 auto; padding: 0.6rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.menu a { text-decoration: none; }
+.menu nav { display: flex; gap: 1.6rem; }
+.menu nav a { color: var(--cor-link-menu); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500; padding: 0.3rem 0; border-bottom: 2px solid transparent; transition: color 0.2s; }
+.menu nav a:hover { color: var(--cor-link-ativo); }
+.menu nav a.ativo { color: var(--cor-link-ativo); border-bottom-color: var(--azul); }
+.menu-usuario { display: flex; align-items: center; gap: 0.8rem; font-size: 0.9rem; color: var(--texto); }
+.menu-usuario small { color: var(--suave); }
+.menu-usuario button { padding: 0.4rem 0.9rem; font-size: 0.75rem; }
+
+/* ---------- carrossel ---------- */
+/* Corrigido para acomodar o menu transparente */
+.hero { position: relative; overflow: hidden; background: transparent; margin-top: -76px; padding-top: 76px; }
+.hero-int { position: relative; z-index: 1; max-width: var(--largura); margin: 0 auto; padding: 2.5rem 1.25rem 3.5rem; display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 1.5rem; min-height: 460px; }
+.hero-texto, .detalhe-texto { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; animation: entra 0.5s ease; }
+.hero h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: 0.09em; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.hero-img { width: 100%; animation: entra 0.6s ease; }
+.hero-preco { margin: 0.3rem 0; color: var(--suave); }
+.hero-preco strong { color: var(--texto); font-size: 1.6rem; font-weight: 600; }
+.hero-acoes { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.hero-ctrl { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0.9rem; display: flex; justify-content: center; align-items: center; gap: 1rem; }
+button.seta { width: 38px; height: 38px; padding: 0; border-radius: 50%; clip-path: none; background: var(--fundo-cartao); color: var(--texto); font-size: 1.4rem; box-shadow: var(--sombra); border: 1px solid var(--linha); }
+button.seta:hover:not(:disabled) { background: var(--azul); color: #fff; border-color: var(--azul); }
+.pontos { display: flex; gap: 0.5rem; }
+.pontos button { width: 10px; height: 10px; padding: 0; border-radius: 50%; clip-path: none; background: var(--linha); }
+.pontos button:hover:not(:disabled) { background: var(--suave); }
+.pontos button.ativo { background: var(--azul); width: 26px; border-radius: 6px; }
+@keyframes entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.marca-nome { font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--azul); font-weight: 600; }
+
+.dados { display: flex; gap: 2rem; flex-wrap: wrap; margin: 0.6rem 0; }
+.dados div { display: flex; flex-direction: column; gap: 0.15rem; }
+.dados dt { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
+.dados dd { margin: 0; font-weight: 600; letter-spacing: 0.04em; }
+
+/* ---------- páginas ---------- */
+.pagina { max-width: var(--largura); margin: 1.5rem auto; padding: 0 1.25rem; }
+.titulo-secao { font-size: 2rem; margin-bottom: 1rem; }
+.titulo-secao::after { content: ''; display: block; width: 56px; height: 3px; margin-top: 0.5rem; background: linear-gradient(90deg, var(--azul), transparent); }
+.cab-secao { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
+.cab-secao h2 { font-size: 2rem; margin: 0; }
+.cab-secao span { color: var(--suave); }
+.vazio { color: var(--suave); text-align: center; padding: 2rem 0; }
+.voltar { display: inline-block; margin-bottom: 0.6rem; font-size: 0.9rem; text-decoration: none; color: var(--suave); }
+.voltar:hover { color: var(--azul); }
+
+/* ---------- filtros ---------- */
+.filtros-barra { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.8rem; align-items: end; background: var(--fundo-cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; box-shadow: var(--sombra); }
+
+/* ---------- animação card 360 ---------- */
+.grade-carros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.card-3d-wrapper {
+  perspective: 1000px;
+  background: transparent;
+  height: 560px;
+}
+
+.card-3d-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-3d-inner.virado {
+  transform: rotateY(180deg);
+}
+
+.card-frente, .card-verso {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background: var(--fundo-cartao);
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-verso {
+  transform: rotateY(180deg);
+}
+
+.card-3d-wrapper:hover .card-frente,
+.card-3d-wrapper:hover .card-verso {
+  box-shadow: 0 12px 32px rgba(1, 89, 253, 0.18);
+}
+
+.card-foto { display: block; background: var(--fundo-suave); }
+.card-foto img { width: 100%; aspect-ratio: 3 / 2; object-fit: contain; display: block; }
+.card-corpo { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.55rem; }
+.card-corpo h3 { font-size: 1.4rem; letter-spacing: 0.05em; margin: 0; min-height: 2.1em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sub { margin: 0; color: var(--suave); font-size: 0.92rem; }
+.preco-box { background: var(--fundo-suave); border-radius: 8px; padding: 0.7rem 0.9rem; text-align: center; margin: 0.3rem 0; }
+.preco-box small { display: block; color: var(--suave); font-size: 0.8rem; }
+.preco-box .valor { font-size: 2rem; font-weight: 600; letter-spacing: 0.01em; }
+.preco-box .un { color: var(--suave); }
+.card-acoes { display: flex; flex-direction: column; gap: 0.5rem; }
+.card-acoes .btn { width: 100%; }
+.chips { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.3rem; }
+.chip { background: var(--fundo-suave); border-radius: 8px; padding: 0.55rem 0.7rem; }
+.chip small { display: block; color: var(--suave); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.chip strong { font-size: 0.9rem; font-weight: 600; }
+
+/* ---------- página do veículo ---------- */
+.detalhe-hero { background: var(--fundo); position: relative; overflow: hidden; border-bottom: 1px solid var(--linha); margin-top: -76px; padding-top: 76px; }
+.detalhe-hero-int { position: relative; z-index: 1; max-width: var(--largura); margin: 0 auto; padding: 2.5rem 1.25rem; display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: 1.5rem; min-height: 480px; }
+.detalhe-texto h1 { font-size: clamp(2rem, 4.2vw, 3.6rem); letter-spacing: 0.1em; margin: 0; }
+.detalhe-img { width: 100%; }
+.preco-veiculo, .preco-diaria { margin: 0; display: flex; align-items: baseline; gap: 0.6rem; }
+.preco-veiculo small, .preco-diaria small { color: var(--suave); }
+.preco-veiculo strong { font-family: var(--titulo); font-size: 1.8rem; letter-spacing: 0.04em; }
+.preco-diaria strong { font-family: var(--titulo); font-size: 1.8rem; letter-spacing: 0.04em; color: var(--azul); }
+.detalhe-texto .btn { margin-top: 0.8rem; }
+
+
+.ficha-sec { margin-top: 2.5rem; padding: 3rem 0; background: var(--fundo); border-top: 1px solid var(--linha); }
+.ficha-int { max-width: var(--largura); margin: 0 auto; padding: 0 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+.ficha-lista ul { list-style: none; margin: 0 0 1.2rem; padding: 0; }
+.ficha-lista li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--linha); }
+.ficha-lista li span { color: var(--suave); }
+.ficha-lista h3 { margin-top: 1.2rem; font-size: 1.3rem; }
+.ficha-lista ul.equip li { display: list-item; list-style: disc inside; border: 0; padding: 0.2rem 0; color: var(--texto); }
+.ficha-img { width: 100%; }
+
+/* ---------- aluguel ---------- */
+.alugar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+.painel-card { background: var(--fundo-cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 1.3rem; box-shadow: var(--sombra); }
+.campos-datas { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.atalhos-titulo { margin: 1.2rem 0 0.5rem; font-size: 0.85rem; color: var(--suave); }
+.atalhos { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.resumo { display: flex; flex-direction: column; gap: 0.6rem; }
+.resumo img { border-radius: 8px; background: var(--fundo-suave); }
+.resumo h3 { margin: 0; font-size: 1.5rem; }
+.resumo-linhas { margin: 0.4rem 0; }
+.resumo-linhas div { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--linha); }
+.resumo-linhas dt { color: var(--suave); }
+.resumo-linhas dd { margin: 0; font-weight: 600; }
+.resumo-total { background: var(--azul-claro); border-radius: 8px; padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: baseline; }
+.resumo-total strong { font-family: var(--titulo); font-size: 2rem; color: var(--azul); letter-spacing: 0.03em; }
+.nota { font-size: 0.8rem; color: var(--suave); margin: 0; }
+
+/* ---------- pedidos e painel ---------- */
+.filtros { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.pedido { display: flex; gap: 1.2rem; background: var(--fundo-cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; box-shadow: var(--sombra); }
+.pedido > img { width: 240px; flex-shrink: 0; aspect-ratio: 3 / 2; object-fit: contain; border-radius: 8px; background: var(--fundo-suave); align-self: flex-start; }
+.pedido-info { display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-start; min-width: 0; flex: 1; }
+.pedido-titulo { font-family: var(--titulo); font-size: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.pedido-info small { color: var(--suave); }
 .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.edicao { display: flex; flex-direction: column; gap: 0.7rem; width: 100%; max-width: 480px; }
 
-.status { padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; background: #e5e7eb; }
+.status { padding: 0.15rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; background: #e5e7eb; color: #111; }
 .status.Pendente { background: #fef3c7; color: #92400e; }
 .status.Aprovado { background: #d1fae5; color: #065f46; }
-.status.Reprovado, .status.Cancelado { background: #fee2e2; color: #991b1b; }
+.status.Reprovado { background: #fee2e2; color: #991b1b; }
+.status.Cancelado { background: #e5e7eb; color: #4b5563; }
 
-button.secundario { background: #e5e7eb; color: #111827; }
-button.perigo { background: #b91c1c; }
-
-.filtros { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-.cliente-box { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.6rem 0.8rem; background: #f3f4f6; border-radius: 8px; }
+.cliente-box { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0.9rem; background: var(--fundo-suave); border-radius: 8px; width: 100%; }
 .cliente-box ul { margin: 0.2rem 0; padding-left: 1.1rem; }
 .contrato-box { padding: 0.5rem 0.8rem; background: #ecfdf5; color: #065f46; border-radius: 8px; font-size: 0.9rem; }
+
+/* ---------- login e cadastro ---------- */
+.cartao { max-width: 520px; margin: 2.5rem auto; background: var(--fundo-cartao); border-radius: 12px; overflow: hidden; box-shadow: 0 12px 44px rgba(15, 25, 60, 0.14); }
+.cartao-topo { background: var(--preto); padding: 1.2rem 1.5rem; display: flex; justify-content: center; border-bottom: 3px solid var(--azul); }
+.cartao-corpo { padding: 1.5rem; }
+.cartao-corpo h2 { font-size: 1.8rem; }
+.rodape-cartao { text-align: center; color: var(--suave); margin-bottom: 0; }
+
+/* ---------- rodapé ---------- */
+.rodape { background: var(--fundo-suave); color: var(--suave); margin-top: 3rem; border-top: 2px solid var(--azul); }
+.rodape-int { max-width: var(--largura); margin: 0 auto; padding: 2.2rem 1.25rem; display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 2rem; }
+.rodape h4 { font-family: var(--titulo); letter-spacing: 0.03em; color: var(--texto); font-size: 1.1rem; margin: 0 0 0.7rem; }
+.rodape p { font-size: 0.9rem; margin: 0.8rem 0 0; }
+.rodape ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.rodape a { color: var(--suave); text-decoration: none; }
+.rodape a:hover { color: var(--texto); }
+.rodape-fim { border-top: 1px solid var(--linha); text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--suave); }
+
+/* ---------- responsivo ---------- */
+@media (max-width: 860px) {
+  .hero-int, .detalhe-hero-int, .ficha-int, .alugar-grid, .rodape-int { grid-template-columns: 1fr; }
+  .hero-int { min-height: 0; padding-bottom: 4rem; }
+  .detalhe-hero-int { min-height: 0; }
+  .pedido { flex-direction: column; }
+  .pedido > img { width: 100%; }
+  .menu-int { justify-content: center; }
+  .campos-datas { grid-template-columns: 1fr; }
+}
+
+/* Remove o contorno de foco do SquishSwitch */
+.squish-switch:focus-visible .squish-switch__track {
+  outline: none !important;
+}
+
+/* --- 1. Remove a linha do Menu --- */
+.menu { 
+  background: transparent; 
+  position: absolute; 
+  width: 100%; 
+  top: 0; 
+  left: 0; 
+  z-index: 20; 
+  border-bottom: none; /* <-- Linha removida */
+}
+
+/* --- 2. Desativa a seleção de texto no site --- */
+body {
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Permite selecionar texto apenas nos inputs e textareas */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* --- 3. Centraliza as setas do Carrossel --- */
+button.seta { 
+  display: flex; /* <-- Adicionado */
+  align-items: center; /* <-- Adicionado */
+  justify-content: center; /* <-- Adicionado */
+  width: 38px; 
+  height: 38px; 
+  padding: 0; 
+  border-radius: 50%; 
+  clip-path: none; 
+  background: var(--fundo-cartao); 
+  color: var(--texto); 
+  font-size: 1.4rem; 
+  box-shadow: var(--sombra); 
+  border: 1px solid var(--linha); 
+}
+
+/* --- 4. Remove o hover (borda de foco) do SquishSwitch --- */
+.squish-switch:hover .squish-switch__track,
+.squish-switch:focus-visible .squish-switch__track,
+.squish-switch:active .squish-switch__track {
+  outline: none !important;
+  box-shadow: 
+    inset 0 3px 8px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.06),
+    0 0 0 3px var(--ss-ring),
+    0 0 0 4px var(--ss-ring-edge),
+    0 8px 14px -6px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* --- Hierarquia de cor nos cards: só a ação principal é azul --- */
+.card-corpo .link-btn { color: var(--suave); }
+.card-corpo .link-btn:hover:not(:disabled) { color: var(--texto); text-decoration: underline; }
+
+/* --- Setas do carrossel: ícone SVG, sempre centralizado no círculo --- */
+button.seta { width: 40px; height: 40px; transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s; }
+button.seta svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+button.seta:hover:not(:disabled) { transform: scale(1.08); }
+button.seta:active:not(:disabled) { transform: scale(0.96); }
+.pontos { align-items: center; }
+.pontos button { transition: width 0.25s ease, background 0.2s; }
+
+/* --- Nomes de modelo: não quebram no hífen e dividem as linhas por igual --- */
+.sem-quebra { white-space: nowrap; }
+.hero h2, .detalhe-texto h1, .card-corpo h3, .resumo h3 { text-wrap: balance; }
+
+/* --- Galeria em profundidade (página do veículo) --- */
+/* Sem cartão: só o carro recortado, direto sobre o fundo da página. */
+.galeria-3d {
+  position: relative; height: 600px; overflow: hidden;
+  --dc-card-bg: transparent;
+  --dc-card-border: transparent;
+  --dc-shadow: transparent;
+}
+.galeria-3d .depth-carousel__tint { display: none; }
+@media (max-width: 860px) { .galeria-3d { height: 380px; } }
+
+/* --- Fotos de frente e de traseira (página do veículo) ---
+   Nessas poses o carro ocupa só o centro da foto; a ampliação aproveita a área
+   transparente ao redor, sem mudar o tamanho da coluna nem do texto ao lado. */
+.detalhe-img, .ficha-img { transform: scale(1.4); }
+.ficha-sec { overflow: hidden; }
+
+/* --- Ondas no topo da página do veículo --- */
+.detalhe-ondas { position: absolute; inset: 0; z-index: 0; opacity: 0.6; pointer-events: none; }
+
+/* --- Fotos dos carros não podem ser arrastadas nem selecionadas --- */
+img { -webkit-user-drag: none; user-select: none; }
+.hero-img, .detalhe-img, .ficha-img { pointer-events: none; }
+
+/* --- Tela de aluguel: campo livre de dias e valor total --- */
+.atalhos { align-items: center; }
+.atalho-livre { flex-direction: row; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--suave); margin-left: 0.3rem; }
+.atalho-livre input { width: 5.2rem; padding: 0.55rem 0.7rem; border-radius: 18px; text-align: center; font-weight: 600; }
+/* No modo escuro o valor era azul sobre azul; agora o texto é claro. */
+html.dark .resumo-total small { color: #cfd6e6; }
+html.dark .resumo-total strong { color: #ffffff; }
+
+/* --- Cards de pedido (cliente e agente): brilho na borda, dados maiores, ações à direita --- */
+.pedido-glow { margin-bottom: 1rem; }
+.pedido-glow .pedido { background: transparent; border: 0; box-shadow: none; margin: 0; padding: 1.1rem 1.3rem; align-items: center; gap: 1.4rem; }
+.pedido-glow .pedido > img { background: none; align-self: center; }
+.pedido-info { gap: 0.5rem; font-size: 1.05rem; }
+.pedido-titulo { font-size: 1.8rem; line-height: 1.05; }
+.pedido-linha { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+.pedido-linha.suave { color: var(--suave); font-size: 0.98rem; }
+.pedido-linha strong { font-size: 1.15rem; }
+.status { font-size: 0.9rem; padding: 0.2rem 0.8rem; }
+.cliente-box { font-size: 1rem; gap: 0.25rem; }
+.cliente-box span { color: var(--suave); }
+.contrato-box { font-size: 1rem; }
+.pedido-acoes { display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 0.7rem; flex-shrink: 0; width: 240px; }
+html.dark .contrato-box { background: #064e3b; color: #a7f3d0; }
+@media (max-width: 860px) {
+  .pedido-glow .pedido { align-items: stretch; }
+  .pedido-acoes { width: 100%; align-items: center; }
+}
+
+/* --- Caixa alta só nos nomes de modelo; títulos de seção usam escrita normal --- */
+.hero h2, .detalhe-texto h1, .card-corpo h3, .alugar-carro h3 { text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* --- Rodapé acompanha o tema (antes ficava preto também no modo claro) --- */
+html.dark .rodape { background: var(--preto); }
+
+/* --- Tela de aluguel: carro à esquerda; período, resumo e confirmação à direita --- */
+.alugar-carro { display: flex; flex-direction: column; gap: 0.6rem; }
+.alugar-carro img { width: 100%; border-radius: 8px; background: var(--fundo-suave); }
+.alugar-carro h3 { margin: 0; font-size: 1.7rem; text-wrap: balance; }
+.alugar-lado { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.alugar-lado .titulo-secao { margin-bottom: 0; }
+
+/* --- Cards de pedido: sem barra de rolagem ao arrastar o botão; coluna da direita --- */
+/* O BorderGlow usa overflow:auto no miolo; aqui ele cria barra de rolagem quando o botão de deslizar se move */
+.pedido-glow > .border-glow-inner { overflow: visible !important; }
+.pedido-glow .pedido > img { width: 280px; }
+.pedido-lado { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 1.4rem; flex-shrink: 0; width: 240px; }
+.pedido-lado.largo { width: 380px; }
+.pedido-lado .cliente-box { width: 100%; }
+.pedido-lado .pedido-acoes { align-items: flex-end; }
+.previa-valor { display: flex; flex-direction: column; gap: 0.25rem; margin: 0; padding: 0.7rem 0.9rem; background: var(--fundo-suave); border-left: 3px solid var(--azul); border-radius: 8px; }
+.previa-total { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font-size: 1rem; }
+.previa-total strong { font-size: 1.3rem; color: var(--texto); }
+.previa-detalhe { font-size: 0.9rem; color: var(--suave); }
+.previa-valor.erro { border-left-color: #b91c1c; }
+@media (max-width: 860px) {
+  .pedido-lado, .pedido-lado.largo { width: 100%; align-items: stretch; }
+  .pedido-lado .pedido-acoes { align-items: center; }
+}
+
+/* --- Painel do agente: papel do usuário e escolha de créditos pela empresa --- */
+.painel-papel { margin: -0.4rem 0 1rem; color: var(--suave); max-width: 70ch; }
+.painel-papel:empty { display: none; }
+.suave { color: var(--suave); }
+.creditos-escolha { width: 100%; margin: 0; padding: 0.7rem 0.9rem; border: 1px solid var(--linha); border-radius: 8px; gap: 0.45rem; }
+.creditos-escolha legend { font-size: 0.85rem; font-weight: 600; color: var(--texto); }
+.creditos-escolha label { flex-direction: row; align-items: center; gap: 0.6rem; font-size: 1rem; color: var(--texto); cursor: pointer; }
+.creditos-escolha input[type='checkbox'] { width: 18px; height: 18px; padding: 0; accent-color: var(--azul); flex-shrink: 0; }
+.creditos-escolha small { font-size: 0.85rem; }
+.pedido-lado { gap: 0.9rem; }
+.pedido-lado .pedido-acoes { margin-top: 0.5rem; }
+.contrato-box.neutro { background: var(--fundo-suave); color: var(--suave); }
+html.dark .contrato-box.neutro { background: var(--fundo-suave); color: var(--suave); }
+
+/* --- Card do catálogo: motor à esquerda e diária à direita, na mesma linha --- */
+.card-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; }
+.card-linha .sub { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preco-linha { margin: 0; white-space: nowrap; color: var(--suave); font-size: 0.92rem; }
+.preco-linha strong { color: var(--texto); font-size: 1.1rem; }
+
+/* --- Card do catálogo com altura pelo conteúdo ---
+   Frente e verso ocupam a mesma célula de um grid (em vez de position:absolute com
+   altura fixa): o card fica do tamanho do conteúdo, sem vão nem corte em qualquer largura. */
+.card-3d-wrapper { height: auto; }
+.card-3d-inner { display: grid; height: auto; }
+.card-frente, .card-verso { position: relative; grid-area: 1 / 1; height: auto; min-height: 100%; }
+.grade-carros { align-items: stretch; }
+.preco-linha strong { font-size: 1.05rem; }
+
+/* =====================================================================
+   Login e cadastro: cartão com fundo animado (vídeo ou ondas) e o
+   formulário em um painel translúcido à direita. Sempre em tema escuro.
+   ===================================================================== */
+.auth {
+  --texto: #f3f4f6; --suave: #aab2c5; --linha: rgba(255, 255, 255, 0.16);
+  --fundo-cartao: rgba(255, 255, 255, 0.07); --fundo-suave: rgba(255, 255, 255, 0.1);
+  --azul: #3b82f6; --azul-hover: #60a5fa; --cor-sub-logo: #7fa9ff;
+  color-scheme: dark;
+  min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; color: var(--texto);
+  background: radial-gradient(ellipse at 30% 15%, #1b2233 0%, #0b0d12 60%, #050608 100%);
+}
+.auth-card {
+  position: relative; width: 100%; max-width: 980px; min-height: min(600px, calc(100vh - 3rem));
+  display: grid; grid-template-columns: 1fr minmax(320px, 400px);
+  border-radius: 28px; overflow: hidden; background: #05070c;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.auth-card.largo { max-width: 1120px; grid-template-columns: 1fr minmax(340px, 520px); height: calc(100vh - 3rem); max-height: 860px; }
+.auth-fundo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.auth-lado {
+  position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.6rem;
+  padding: 2rem; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 55%);
+}
+.auth-lado p { margin: 0; color: #d5dbea; max-width: 30ch; }
+.auth-painel {
+  position: relative; z-index: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 1.2rem;
+  padding: 2.2rem 2rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  background: rgba(8, 10, 16, 0.62); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.auth-card.largo .auth-painel { justify-content: flex-start; }
+.auth-painel h1 { font-family: var(--fonte); font-size: 1.8rem; font-weight: 700; letter-spacing: 0; margin: 0; display: flex; align-items: baseline; gap: 0.45rem; }
+.auth-ponto { width: 0.55rem; height: 0.55rem; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #7fa9ff, #0159fd); }
+.auth label { color: #b9c0d0; }
+.auth input, .auth select { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.14); color: #fff; border-radius: 10px; }
+.auth select option { background: #111827; color: #fff; }
+.auth input::placeholder { color: #8a93a6; }
+.auth fieldset { border-color: rgba(255, 255, 255, 0.14); padding: 0.8rem; margin: 0; }
+.auth .erro { color: #fca5a5; }
+.auth a { color: #7fa9ff; }
+.auth .rodape-cartao { margin: 0; color: #aab2c5; }
+.auth-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+.auth .linha { flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .auth-card, .auth-card.largo { grid-template-columns: 1fr; height: auto; max-height: none; }
+  .auth-lado { min-height: 150px; }
+  .auth-painel { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+  .auth-grade { grid-template-columns: 1fr; }
+}
+
+/* --- Login e cadastro em página inteira: sem moldura; o fundo cobre a tela toda --- */
+.auth { padding: 0; background: #05070c; display: block; }
+.auth-card, .auth-card.largo {
+  max-width: none; min-height: 100vh; height: 100vh; max-height: none;
+  border-radius: 0; box-shadow: none;
+}
+.auth-card { grid-template-columns: 1fr minmax(360px, 460px); }
+.auth-card.largo { grid-template-columns: 1fr minmax(380px, 580px); }
+.auth-lado { padding: 2.5rem; }
+.auth-lado p { font-size: 1.15rem; }
+.auth-painel { padding: 2.5rem; }
+@media (max-width: 760px) {
+  .auth-card, .auth-card.largo { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; min-height: 100vh; }
+}
+
+/* =====================================================================
+   Celular e telas estreitas
+   ===================================================================== */
+@media (max-width: 860px) {
+  /* Cabeçalho entra no fluxo da página (no desktop ele flutua sobre o topo) e fica
+     em duas linhas: marca + tema/sair em cima, navegação embaixo. */
+  .app { padding-top: 0; }
+  .menu { position: static; }
+  .menu-int { justify-content: space-between; gap: 0.5rem 0.8rem; padding: 0.6rem 1rem; }
+  .menu-int > a img { height: 36px !important; }
+  .menu .marca-texto strong { font-size: 1.3rem; letter-spacing: 0.18em; }
+  .menu .marca-texto small { font-size: 0.5rem; letter-spacing: 0.4em; }
+  .menu nav { order: 3; width: 100%; justify-content: center; gap: 1.4rem; }
+  .menu-usuario { gap: 0.6rem; }
+  .menu-ola { display: none !important; } /* "Olá, nome" não cabe */
+  .hero, .detalhe-hero { margin-top: 0; padding-top: 0; }
+
+  .pagina { padding: 0 1rem; }
+  .hero-int, .detalhe-hero-int { padding: 1.5rem 1rem 4rem; }
+  .detalhe-hero-int { padding-bottom: 1.5rem; }
+  .cab-secao { flex-wrap: wrap; gap: 0.2rem 1rem; }
+  .galeria-3d { height: 270px; }
+  .dados { gap: 0.8rem 1.6rem; }
+  .titulo-secao, .cab-secao h2 { font-size: 1.7rem; }
+}
+
+/* Brilhos de borda e de botão passam alguns pixels do conteúdo; sem isto, no celular
+   eles criam rolagem lateral e a página inteira encolhe. */
+.app { overflow-x: clip; }
+
+/* --- Login e cadastro no celular ---
+   O vídeo fica fixo cobrindo a tela inteira; a marca vai centralizada no topo e o
+   formulário vira um cartão translúcido flutuando sobre o vídeo (antes o painel
+   cobria quase a tela toda e o vídeo só aparecia numa faixa no topo). */
+@media (max-width: 760px) {
+  .auth-card, .auth-card.largo { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; height: auto; background: transparent; }
+  .auth-fundo { position: fixed; }
+  .auth-lado { min-height: 0; padding: 2rem 1rem 1.2rem; align-items: center; justify-content: flex-start; background: none; }
+  .auth-painel {
+    flex: 0 0 auto; margin: auto 1rem; padding: 1.6rem 1.3rem; overflow: visible;
+    border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 22px;
+    background: rgba(8, 10, 16, 0.55); -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.8);
+  }
+  .auth-card.largo .auth-painel { margin: 0 1rem 1.5rem; }
+  /* Escurece um pouco o vídeo para a marca e o cartão continuarem legíveis */
+  .auth-card::before { content: ''; position: fixed; inset: 0; z-index: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.15) 30%, rgba(0, 0, 0, 0.45)); pointer-events: none; }
+}

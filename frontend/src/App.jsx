@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx'
 import Cadastro from './pages/Cadastro.jsx'
 import Inicio from './pages/Inicio.jsx'
 import CarroDetalhe from './pages/CarroDetalhe.jsx'
+import Alugar from './pages/Alugar.jsx'
 import MeusPedidos from './pages/MeusPedidos.jsx'
 
 export default function App() {
@@ -18,6 +19,10 @@ export default function App() {
         <Route
           path="/carros/:id"
           element={<RotaPorPerfil apenasCliente><CarroDetalhe /></RotaPorPerfil>}
+        />
+        <Route
+          path="/alugar/:id"
+          element={<RotaPorPerfil apenasCliente><Alugar /></RotaPorPerfil>}
         />
         <Route
           path="/meus-pedidos"

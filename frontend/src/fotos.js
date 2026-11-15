@@ -8,6 +8,7 @@ export const POSES = [
   { id: 'traseira', rotulo: 'Traseira' },
 ]
 
-export function urlFoto(matricula, pose = 'frente') {
-  return `${BASE}/${matricula}/${pose}.avif`
+// A foto principal de cada carro é a de frente e lateral.
+export function urlFoto(matricula, pose = 'frente-lateral') {
+  return `${BASE}/${matricula}/${pose}.png`
 }

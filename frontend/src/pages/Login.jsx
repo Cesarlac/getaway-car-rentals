@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { useAuth } from '../auth/AuthContext.js'
+import BotaoPrimario from '../components/BotaoPrimario.jsx'
+import TelaAuth from '../components/TelaAuth.jsx'
 
 export default function Login() {
   const [login, setLogin] = useState('')
@@ -27,24 +29,24 @@ export default function Login() {
   }
 
   return (
-    <main className="cartao">
-      <h1>Getaway Car Rentals</h1>
-      <h2>Entrar</h2>
-      <form onSubmit={enviar}>
-        <label>
-          Usuário
-          <input value={login} onChange={(e) => setLogin(e.target.value)} required />
-        </label>
-        <label>
-          Senha
-          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-        </label>
-        {erro && <p className="erro">{erro}</p>}
-        <button disabled={carregando}>{carregando ? 'Entrando...' : 'Entrar'}</button>
-      </form>
-      <p>
-        Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link>
-      </p>
-    </main>
+    <TelaAuth titulo="Faça o seu login">
+        <form onSubmit={enviar}>
+          <label>
+            Usuário
+            <input value={login} onChange={(e) => setLogin(e.target.value)} required />
+          </label>
+          <label>
+            Senha
+            <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
+          </label>
+          {erro && <p className="erro">{erro}</p>}
+          <BotaoPrimario type="submit" disabled={carregando} style={{ width: '100%' }}>
+            {carregando ? 'ENTRANDO...' : 'ENTRAR'}
+          </BotaoPrimario>
+        </form>
+        <p className="rodape-cartao">
+          Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link>
+        </p>
+    </TelaAuth>
   )
 }
